@@ -3,30 +3,16 @@ using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http.Features;
+using amorphie.adapter.strapi.Service;
 
-public class StrapiDataAdapter : IDataAdapter
+public sealed class StrapiDataAdapter : IDataAdapter
 {
-
-    private readonly IHttpClientFactory _httpClientFactory;
-
-    public StrapiDataAdapter(IHttpClientFactory httpClientFactory) =>
-        _httpClientFactory = httpClientFactory;
-
+    private readonly IStrapiService _strapiService;
+    public StrapiDataAdapter(IStrapiService strapiService)=> _strapiService = strapiService;
 
     public async ValueTask<string> Search(string entity, int page, int pageSize, string? keyword, Dictionary<string, dynamic>? filters)
     {
-        var queryParams = new Dictionary<string, string?>();
-
-        queryParams.Add("pagination[page]", page.ToString());
-        queryParams.Add("pagination[pageSize]", pageSize.ToString());
-
-        var message = BuildHttpRequestMessage(entity, HttpMethod.Get, queryParams);
-
-        var httpClient = _httpClientFactory.CreateClient();
-        var httpResponseMessage = await httpClient.SendAsync(message);
-
-
-        var response = await httpResponseMessage.Content.ReadFromJsonAsync<JsonNode>();
+        var response = await _strapiService.GetEntity(entity, page, pageSize);
 
         List<JsonObject> result = new();
 
@@ -47,7 +33,6 @@ public class StrapiDataAdapter : IDataAdapter
             result.Add(returnItem);
         }
 
-
         return JsonSerializer.Serialize(result);
     }
 
@@ -55,30 +40,4 @@ public class StrapiDataAdapter : IDataAdapter
     {
         throw new NotImplementedException();
     }
-
-
-    private static HttpRequestMessage BuildHttpRequestMessage(string entity, HttpMethod method, Dictionary<string, string?>? queryParams)
-    {
-        var url = Environment.GetEnvironmentVariable("STRAPI_URL") ?? throw new ArgumentNullException("Parameter is not suplied as enviroment variable", "STRAPI_URL");
-        var token = Environment.GetEnvironmentVariable("STRAPI_TOKEN") ?? throw new ArgumentNullException("Parameter is not suplied as enviroment variable", "STRAPI_TOKEN");
-
-        UriBuilder uri = new(url)
-        {
-            Path = $"api/{entity}"
-        };
-
-        if (queryParams != null)
-        {
-            uri = new UriBuilder(QueryHelpers.AddQueryString(uri.Uri.ToString(), queryParams));
-        }
-
-        var httpRequestMessage = new HttpRequestMessage(
-            method,
-            uri.Uri);
-
-        httpRequestMessage.Headers.Authorization = new("Bearer", token);
-
-        return httpRequestMessage;
-    }
-
 }
