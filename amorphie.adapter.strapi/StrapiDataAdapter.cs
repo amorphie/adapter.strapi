@@ -25,6 +25,7 @@ public class StrapiDataAdapter : IDataAdapter
         var httpClient = _httpClientFactory.CreateClient();
         var httpResponseMessage = await httpClient.SendAsync(message);
 
+
         var response = await httpResponseMessage.Content.ReadFromJsonAsync<JsonNode>();
 
         List<JsonObject> result = new();
@@ -37,6 +38,11 @@ public class StrapiDataAdapter : IDataAdapter
             {
                 ["id"] = id
             };
+
+            foreach (var x in item["attributes"].AsObject())
+            {
+                returnItem.Add(x.Key, x.Value.ToString());
+            }
 
             result.Add(returnItem);
         }
