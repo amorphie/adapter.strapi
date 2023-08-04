@@ -21,8 +21,7 @@ public class DataProviderModule : BaseRoute
         routeGroupBuilder.MapPost("{entity}", UpsertMethod);
     }
 
-    //protected async ValueTask<IResult> SearchMethod( 
-    protected IResult SearchMethod(
+    protected async ValueTask<IResult> SearchMethod(
         [FromRoute] string entity,
         [AsParameters] DtoSearchBase searchData,
         HttpContext context,
@@ -34,14 +33,14 @@ public class DataProviderModule : BaseRoute
         // We need for reference filtering. Additional dynamic query string parameters must read by QueryString
         // context... context.Request.QueryString
 
-        dynamic result;
+        string result;
 
         try
         {
-            result = adapter.Search(entity, searchData.Page, searchData.PageSize, searchData.Keyword, filters);
+            result = await adapter.Search(entity, searchData.Page, searchData.PageSize, searchData.Keyword, filters);
             return Results.Ok(result);
         }
-        catch(Exception)
+        catch (Exception)
         {
             return Results.BadRequest();
 
