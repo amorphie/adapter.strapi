@@ -9,6 +9,6 @@ namespace amorphie.adapter.strapi.Service;
 
 public interface IStrapiService
 {
-    [Get("/api/{entity}?pagination[page]={page}&pagination[pageSize]={pageSize}")]
+    [Get("/api/{entity}?pagination[page]={page}&pagination[pageSize]={pageSize}&populate=*")]
     Task<JsonNode> GetEntity(string entity,int page,int pageSize);
 }

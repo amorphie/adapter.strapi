@@ -3,7 +3,7 @@ using System.Text.Json;
 
 using amorphie.core.Module.minimal_api;
 using amorphie.core.Base;
-
+using System.Text.Json.Nodes;
 
 public class DataProviderModule : BaseRoute
 {
@@ -17,23 +17,35 @@ public class DataProviderModule : BaseRoute
 
     public override void AddRoutes(RouteGroupBuilder routeGroupBuilder)
     {
-        routeGroupBuilder.MapGet("{entity}", SearchMethod);
+
+        routeGroupBuilder.MapGet("{entity}", SearchMethod).WithOpenApi(generatedOperation =>
+        {
+            generatedOperation.Description ="This operation directly queries Strapi Collections. Strapi Collections are like database tables. These collections can be queried with pagination and full text search capabilities.";
+
+            generatedOperation.Parameters[0].Description = "Collection Type name on Strapi to query";
+            generatedOperation.Parameters[1].Description = "Which page will ve returned? Page index starts with 1";
+            generatedOperation.Parameters[2].Description = "How many records does the page contain? Minimum value is 1. Maximum value is 100";
+            generatedOperation.Parameters[3].Description = "Full text search keyword.";
+
+            return generatedOperation;
+        });
+
         routeGroupBuilder.MapPost("{entity}", UpsertMethod);
     }
 
     protected async ValueTask<IResult> SearchMethod(
-        [FromRoute] string entity,
-        [AsParameters] DtoSearchBase searchData,
-        HttpContext context,
-        IDataAdapter adapter
-        )
+            [FromRoute] string entity,
+            [AsParameters] DtoSearchBase searchData,
+            HttpContext context,
+            IDataAdapter adapter
+            )
     {
         Dictionary<string, dynamic>? filters = null;
 
         // We need for reference filtering. Additional dynamic query string parameters must read by QueryString
         // context... context.Request.QueryString
 
-        string result;
+        List<JsonObject> result;
 
         try
         {

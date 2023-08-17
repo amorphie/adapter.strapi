@@ -4,13 +4,19 @@
         "colId": "history",
         "containerId": "",
         "name": "http://localhost:1337/api/courses",
-        "url": "http://localhost:1337/api/courses",
+        "url": "http://localhost:1337/api/courses?populate=*",
         "method": "GET",
         "sortNum": 0,
         "created": "2023-08-01T08:28:53.111Z",
-        "modified": "2023-08-01T08:29:17.036Z",
+        "modified": "2023-08-17T14:51:06.554Z",
         "headers": [],
-        "params": [],
+        "params": [
+            {
+                "name": "populate",
+                "value": "*",
+                "isPath": false
+            }
+        ],
         "auth": {
             "type": "bearer",
             "bearer": "2969433ddff5a1e8c11f05c21fe7aedb211e6d104c62fbd1afabf7c256945fc519ff2c92fbdac94ca551a1facdf8cdee53f3e9defbfd4134178518d59127a321eef9f6fdef54f65a368e18e54b53dd77f7a09b24a0d9cc8fa3c9d9a2f51b02071d86c9d3f99a599d10c072aee27b6d7b43cf6f43e10e25dc85b4a59068e998a5"
