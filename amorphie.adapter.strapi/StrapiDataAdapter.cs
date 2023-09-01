@@ -22,7 +22,7 @@ public sealed class StrapiDataAdapter : IDataAdapter
             result.Add(item.AsObject());
         }
 
-        return result; 
+        return result;
     }
 
     public ValueTask<dynamic> Upsert(string entity, JsonElement data)

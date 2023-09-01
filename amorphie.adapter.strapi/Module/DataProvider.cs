@@ -20,7 +20,7 @@ public class DataProviderModule : BaseRoute
 
         routeGroupBuilder.MapGet("{entity}", SearchMethod).WithOpenApi(generatedOperation =>
         {
-            generatedOperation.Description ="This operation directly queries Strapi Collections. Strapi Collections are like database tables. These collections can be queried with pagination and full text search capabilities.";
+            generatedOperation.Description = "This operation directly queries Strapi Collections. Strapi Collections are like database tables. These collections can be queried with pagination and full text search capabilities.";
 
             generatedOperation.Parameters[0].Description = "Collection Type name on Strapi to query";
             generatedOperation.Parameters[1].Description = "Which page will ve returned? Page index starts with 1";
